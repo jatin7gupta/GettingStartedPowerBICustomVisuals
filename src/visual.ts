@@ -43,8 +43,9 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions) {
             this.settings = Visual.parseSettings(options &&
-                options.dataViews && options.dataViews[0]);
+                -                options.dataViews && options.dataViews[0]);
             let _this = this;
+
             // get height and width from viewport
             _this.svg.attr({
                 height: options.viewport.height,
@@ -61,17 +62,17 @@ module powerbi.extensibility.visual {
                 width: gWidth
             });
             _this.g.attr('transform',
-                `translate( ${_this.margin.left} , ${_this.margin.top})`);
+                `translate(${ _this.margin.left}, ${ _this.margin.top})`);
 
             // convert data format
             let dat = Visual.converter(options);
 
             // setup d3 scale
             let xScale = d3.scale.ordinal()
-                .domain(dat.map((d)=> { return d.Country; }))
+                .domain(dat.map( (d)=> { return d.Country; }))
                 .rangeRoundBands([0, gWidth], 0.1);
             let yMax =
-                d3.max(dat, (d)=> { return d.Amount + 10 });
+                d3.max(dat,  (d)=> { return d.Amount + 10 });
             let yScale = d3.scale.linear()
                 .domain([0, yMax])
                 .range([gHeight, 0]);
@@ -88,7 +89,7 @@ module powerbi.extensibility.visual {
                 .append('g')
                 .attr('class', 'x axis')
                 .style('fill', 'black')
-                .attr('transform', `translate(0,${ (gHeight - 1)} )`)
+                .attr('transform', `translate(0, ${(gHeight - 1)})`)
                 .call(xAxis)
                 .selectAll('text') // rotate text
                 .style('text-anchor', 'end')
@@ -115,16 +116,16 @@ module powerbi.extensibility.visual {
             shapes.enter()
                 .append('rect')
                 .attr('class', 'bar')
-                .attr('fill', 'green')
+                .attr('fill', 'yellow')
                 .attr('stroke', 'black')
-                .attr('x',  (d)=> {
+                .attr('x', (d) => {
                     return xScale(d.Country);
                 })
                 .attr('width', xScale.rangeBand())
-                .attr('y',(d)=> {
+                .attr('y', (d)=> {
                     return yScale(d.Amount);
                 })
-                .attr('height',  (d) => {
+                .attr('height',(d) => {
                     return gHeight - yScale(d.Amount);
                 });
 
